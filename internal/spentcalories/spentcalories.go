@@ -19,7 +19,6 @@ const (
 
 func parseTraining(data string) (int, string, time.Duration, error) {
 	parts := strings.Split(data, ",")
-
 	if len(parts) != 3 {
 		return 0, "", 0, fmt.Errorf("неверный формат данных: ожидалось 3 части, разделенные запятой, получено: %d", len(parts))
 	}
@@ -29,11 +28,23 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 		return 0, "", 0, fmt.Errorf("не удалось преобразовать количество шагов в число: %w", err)
 	}
 
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("количество шагов должно быть положительным числом, получено: %d", steps)
+	}
+	if steps <= 0 {
+		return 0, "", 0, fmt.Errorf("количество шагов должно быть положительным числом, получено: %d", steps)
+	}
 	duration, err := time.ParseDuration(parts[2])
 	if err != nil {
 		return 0, "", 0, fmt.Errorf("не удалось преобразовать продолжительность: %w", err)
 	}
 
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("продолжительность должна быть положительной, получено: %v", duration)
+	}
+	if duration <= 0 {
+		return 0, "", 0, fmt.Errorf("продолжительность должна быть положительной, получено: %v", duration)
+	}
 	trainingType := parts[1]
 
 	return steps, trainingType, duration, nil
@@ -81,7 +92,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 	avgSpeed := meanSpeed(steps, height, duration)
 
 	result := fmt.Sprintf(
-		"Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f",
+		"Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 		trainingType,
 		duration.Hours(),
 		dist,

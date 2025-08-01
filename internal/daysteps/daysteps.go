@@ -2,6 +2,7 @@ package daysteps
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -38,34 +39,32 @@ func parsePackage(data string) (int, time.Duration, error) {
 		// При ошибке вернуть нули и ошибку.
 		return 0, 0, fmt.Errorf("не удалось преобразовать продолжительность: %w", err)
 	}
-
+	if duration <= 0 {
+		return 0, 0, fmt.Errorf("продолжительность должна быть положительной, получено: %v", duration)
+	}
 	return steps, duration, nil
 }
 
 func DayActionInfo(data string, weight, height float64) string {
 	steps, duration, err := parsePackage(data)
 	if err != nil {
-		// В случае ошибки вывести её и вернуть пустую строку.
-		fmt.Printf("Ошибка при обработке данных: %v\n", err)
+
+		log.Printf("Ошибка при обработке данных: %v\n", err)
 		return ""
 	}
 
-	// Дистанция в метрах.
 	distanceMeters := float64(steps) * stepLength
 
-	// Дистанцию в километры.
 	distanceKm := distanceMeters / mInKm
 
-	// Вычисление количество калорий с помощью функции из другого пакета.
 	calories, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 	if err != nil {
-		// Если при расчете калорий возникла ошибка
-		fmt.Printf("Ошибка при расчете калорий: %v\n", err)
+		log.Printf("Ошибка при расчете калорий: %v\n", err)
 		return ""
 	}
 
 	result := fmt.Sprintf(
-		"Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.",
+		"Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.\n",
 		steps,
 		distanceKm,
 		calories,
